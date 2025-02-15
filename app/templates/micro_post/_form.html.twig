@@ -1,0 +1,21 @@
+{{ form_start(form) }}
+    <div>{{ form_errors(form) }}</div>
+    {# //div form label #}
+    <div class="form-group">
+    <div>
+        {{ form_label(form.title, 'please enter title :') }}
+    </div>
+    <div>
+        {{ form_widget(form.title) }}
+    </div>
+    <div>
+        {{ form_label(form.text, 'please enter text :') }}
+    </div>
+    <div>
+        {{ form_widget(form.text) }}
+    </div>
+    </div>
+    {# //div form label #}
+
+    <button type="submit" class="btn btn-primary">Save !</button>
+{{ form_end(form) }}
