@@ -32,9 +32,13 @@ class MicroPost
     #[ORM\OneToMany(mappedBy: 'microPost', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'Liked')]
+    private Collection $likedBy;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->likedBy = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -104,6 +108,30 @@ class MicroPost
                 $comment->setMicroPost(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getLikedBy(): Collection
+    {
+        return $this->likedBy;
+    }
+
+    public function addLikedBy(User $likedBy): static
+    {
+        if (!$this->likedBy->contains($likedBy)) {
+            $this->likedBy->add($likedBy);
+        }
+
+        return $this;
+    }
+
+    public function removeLikedBy(User $likedBy): static
+    {
+        $this->likedBy->removeElement($likedBy);
 
         return $this;
     }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -29,6 +31,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?UserProfile $userProfile = null;
+
+    #[ORM\ManyToMany(targetEntity: MicroPost::class, mappedBy: 'likedBy')]
+    private Collection $Liked;
+
+    public function __construct()
+    {
+        $this->Liked = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -113,6 +123,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->userProfile = $userProfile;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MicroPost>
+     */
+    public function getLiked(): Collection
+    {
+        return $this->Liked;
+    }
+
+    public function addLiked(MicroPost $liked): static
+    {
+        if (!$this->Liked->contains($liked)) {
+            $this->Liked->add($liked);
+            $liked->addLikedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLiked(MicroPost $liked): static
+    {
+        if ($this->Liked->removeElement($liked)) {
+            $liked->removeLikedBy($this);
+        }
 
         return $this;
     }
